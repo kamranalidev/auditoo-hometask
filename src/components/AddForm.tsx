@@ -31,7 +31,6 @@ export function AddForm({ levels, onAdd, onCancel }: Props) {
       className="px-4 py-4 border-t"
       style={{ backgroundColor: "#F9FAFB", borderColor: "#D0D5DD" }}
     >
-      {/* Type selector */}
       <div className="flex gap-2 mb-3">
         <Button
           onClick={() => setNewType("level")}
@@ -85,7 +84,7 @@ export function AddForm({ levels, onAdd, onCancel }: Props) {
             newType === "level" ? "Nom du niveau" : "Nom de l'espace"
           }
           className="flex-1 px-3 py-2 text-sm border rounded-lg outline-none bg-white"
-          style={{ borderColor: "#D0D5DD" }}
+          style={{ borderColor: "#D0D5DD", fontSize: "16px" }}
         />
         <Button
           onClick={handleAdd}

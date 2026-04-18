@@ -47,16 +47,14 @@ export function SortableRow({
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center justify-between px-4 border-b bg-white"
+      className={`flex items-center justify-between px-4 border-b bg-white select-none${reorderMode ? " touch-none" : ""}`}
+      {...(reorderMode ? attributes : {})}
+      {...(reorderMode ? listeners : {})}
     >
       {reorderMode && (
-        <button
-          className="mr-3 touch-none cursor-grab active:cursor-grabbing"
-          {...attributes}
-          {...listeners}
-        >
+        <span className="mr-3 cursor-grab active:cursor-grabbing">
           <GripVertical size={16} className="text-gray-400" />
-        </button>
+        </span>
       )}
 
       {isEditing ? (
@@ -66,6 +64,7 @@ export function SortableRow({
           onBlur={onEditConfirm}
           onKeyDown={(e) => e.key === "Enter" && onEditConfirm()}
           className="flex-1 h-8 text-sm mr-4"
+          style={{ fontSize: "16px" }}
           autoFocus
         />
       ) : (

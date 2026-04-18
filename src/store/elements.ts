@@ -11,6 +11,7 @@ interface ElementsStore {
   deleteElement: (id: string) => void;
   reorderElement: (id: string, newOrder: string) => void;
   moveSpace: (id: string, newLevelId: string, newOrder: string) => void;
+  setElements: (elements: Element[]) => void;
 }
 
 const SEED: Element[] = [
@@ -89,4 +90,6 @@ export const useElementsStore = create<ElementsStore>((set, get) => ({
     set((s) => ({
       elements: s.elements.filter((e) => e.id !== id && e.levelId !== id),
     })),
+
+  setElements: (elements) => set(() => ({ elements })),
 }));

@@ -1,20 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { X, Plus, ChevronLeft } from "lucide-react";
 import { useElementsStore } from "../store/elements";
 import { ElementList } from "../components/ElementList";
 import { AddForm } from "../components/AddForm";
 import { Button } from "@/components/ui/button";
+import type { Element } from "../types";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
 
 function Index() {
-  const { elements, addLevel, addSpace } = useElementsStore();
+  const { elements, addLevel, addSpace, setElements } = useElementsStore();
   const [mode, setMode] = useState<"normal" | "reorder">("normal");
   const [showAdd, setShowAdd] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const snapshotRef = useRef<Element[] | null>(null);
 
   const levels = elements.filter((e) => e.type === "level");
 
@@ -24,7 +26,22 @@ function Index() {
     setShowAdd(false);
   }
 
+  function handleEnterReorder() {
+    snapshotRef.current = elements;
+    setShowAdd(false);
+    setMode("reorder");
+  }
+
+  function handleAnnuler() {
+    if (snapshotRef.current !== null) {
+      setElements(snapshotRef.current);
+    }
+    snapshotRef.current = null;
+    setMode("normal");
+  }
+
   function handleValider() {
+    snapshotRef.current = null;
     setMode("normal");
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
@@ -32,8 +49,8 @@ function Index() {
 
   return (
     <div
-      className="flex flex-col bg-white"
-      style={{ height: "100dvh", maxWidth: "393px", margin: "0 auto" }}
+      className="flex flex-col bg-white overflow-x-hidden mx-auto"
+      style={{ height: "100dvh", width: "100%", maxWidth: "393px" }}
     >
       {/* Header */}
       <div
@@ -44,7 +61,7 @@ function Index() {
           <Button
             variant="ghost"
             className="flex items-center gap-1 text-sm font-semibold px-0 hover:bg-transparent"
-            onClick={() => setMode("normal")}
+            onClick={handleAnnuler}
             style={{ color: "#17B26A" }}
           >
             <ChevronLeft size={18} color="#17B26A" />
@@ -64,9 +81,9 @@ function Index() {
       {showToast && (
         <div className="flex justify-center px-4 pt-3 shrink-0">
           <div
-            className="flex items-center px-5 py-4 text-sm text-gray-700 bg-white rounded"
+            className="flex items-center px-5 py-4 text-sm text-gray-700 bg-white rounded w-full"
             style={{
-              width: "361px",
+              maxWidth: "361px",
               boxShadow:
                 "0 2px 4px -2px rgba(16,24,40,0.06), 0 4px 8px -2px rgba(16,24,40,0.10)",
             }}
@@ -108,10 +125,7 @@ function Index() {
               <Plus size={18} />
             </Button>
             <Button
-              onClick={() => {
-                setShowAdd(false);
-                setMode("reorder");
-              }}
+              onClick={handleEnterReorder}
               className="flex-1 text-white rounded-xl"
               style={{ height: "44px", backgroundColor: "#17B26A" }}
             >
@@ -122,7 +136,7 @@ function Index() {
           <div className="flex gap-3 w-full">
             <Button
               variant="outline"
-              onClick={() => setMode("normal")}
+              onClick={handleAnnuler}
               className="flex-1 rounded-xl"
               style={{ height: "44px" }}
             >
